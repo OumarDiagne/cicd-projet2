@@ -7,7 +7,7 @@ jobs:
 
   build-frontend-and-node-api:
     env:
-      OWNER: "${{ github.repository }}"
+      OWNER: "${{ github.repository_owner }}"
     # needs: [fix-repo-name]
     runs-on: ubuntu-latest
     permissions:
@@ -16,10 +16,10 @@ jobs:
       matrix:
         include:
           - context_name: "frontend"
-            image_name: ghcr.io/${{ github.OWNER_LC }}/frontend
+            image_name: ghcr.io/${{ github.OWNER_LC }}/cicd-projet2/frontend
 
           - context_name: "node-api"
-            image_name: ghcr.io/${{ github.OWNER_LC }}/node-api
+            image_name: ghcr.io/${{ github.OWNER_LC }}/cicd-projet2/node-api
     steps:
       - name: set lower case owner name
         run: |
