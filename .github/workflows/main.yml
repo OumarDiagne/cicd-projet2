@@ -1,26 +1,19 @@
-name: CI/CD workflow
+name: Build et push images Docker
 on: push
 
 jobs:
   build-frontend-and-node-api:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     strategy:
       matrix:
         include:
           - context: ./frontend
-            image_name:
-              [
-                ghcr.io/OumarDiagne/cicd-projet2/node-api,
-                ghcr.io/OumarDiagne/cicd-projet2/frontend,
-              ]
+          - image_name: ghcr.io/OumarDiagne/cicd-projet2/frontend
+
           - context: ./node-api
-            image_name:
-              [
-                ghcr.io/OumarDiagne/cicd-projet2/node-api,
-                ghcr.io/OumarDiagne/cicd-projet2/node-api,
-              ]
-    permissions:
-      packages: write
+          - image_name: ghcr.io/OumarDiagne/cicd-projet2/node-api
     steps:
       - name: checkout code
         uses: actions/checkout@v3
