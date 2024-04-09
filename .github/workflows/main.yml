@@ -2,7 +2,48 @@ name: CI/CD workflow
 on: push
 
 jobs:
-  build-frontend:
+  build-frontend-and-node-api:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        includes:
+          - context: ./frontend
+            image_name:
+              [
+                ghcr.io/oumardiagne/cicd-projet2/node-api,
+                ghcr.io/oumardiagne/cicd-projet2/frontend,
+              ]
+          - context: ./node-api
+            image_name:
+              [
+                ghcr.io/oumardiagne/cicd-projet2/node-api,
+                ghcr.io/oumardiagne/cicd-projet2/node-api,
+              ]
+    permissions:
+      packages: write
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: context
+          push: true
+          tags: image_name
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-api-node:
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -22,8 +63,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
+          context: context
           push: true
-          tags: ghcr.io/oumardiagne/cicd-projet2/frontend:latest
-
-  # build-api-node:
+          tags: image_name
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
