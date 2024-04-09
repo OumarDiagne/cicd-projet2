@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        includes:
+        include:
           - context: ./frontend
             image_name:
               [
