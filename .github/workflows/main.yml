@@ -2,6 +2,52 @@ name: Build et push images Docker
 on: push
 
 jobs:
+  tests-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          cache: "npm"
+          cache-dependency-path: ./frontend/package-lock.json
+      - name: install dependencies
+        run: npm ci --prefer-offline
+      - name: run linter
+        run: npm run lint
+      - name: npm audit
+        run: npm audit --audit-level=moderate
+
+  tests-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          cache: "npm"
+          cache-dependency-path: ./frontend/package-lock.json
+      - name: install dependencies
+        run: npm ci --prefer-offline
+      - name: run linter
+        run: npm run lint
+      - name: npm audit
+        run: npm audit --audit-level=moderate
+      - name: exec untis tests audit
+        run: npm run test:ci
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: OumarDiagne/cicd-projet2
   fix-repo-name:
     runs-on: ubuntu-latest
     env:
@@ -15,7 +61,7 @@ jobs:
       lowername: ${{ steps.lower_repo.outputs.OWNER_LC }}
 
   build-frontend-and-node-api:
-    needs: [fix-repo-name]
+    needs: [fix-repo-name, tests-backend, tests-frontend]
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -29,7 +75,7 @@ jobs:
             image_name: ghcr.io/${{ needs.fix-repo-name.outputs.lowername }}/cicd-projet2/node-api
     steps:
       - name: checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
