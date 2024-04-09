@@ -3,10 +3,10 @@ on: push
 
 jobs:
   fix-repo-name:
-     runs-on: ubuntu-latest
-     env:
-      OWNER: "${{ github.repository_owner }}"
-     steps:
+   runs-on: ubuntu-latest
+   env:
+    OWNER: "${{ github.repository_owner }}"
+    steps:
       - name: set lower case owner name
         run: |
          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
@@ -15,11 +15,10 @@ jobs:
 
 
   build-frontend-and-node-api:
-   
-     needs: [fix-repo-name]
+  needs: [fix-repo-name]
     runs-on: ubuntu-latest
     permissions:
-      packages: write
+    packages: write
     strategy:
       matrix:
         include:
