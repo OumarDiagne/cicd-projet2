@@ -27,6 +27,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Récupération des métadonnées # Récupère les métadonnées pour Docker
+        id: metadata # ID pour cette étape
+        uses: docker/metadata-action@v5 # Utilise l'action de métadonnées
+        with:
+          images: ${{ matrix.full_image_name }} # Utilise le nom complet de l'image depuis la matrice
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
