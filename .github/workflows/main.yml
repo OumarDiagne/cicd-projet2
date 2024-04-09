@@ -10,10 +10,10 @@ jobs:
       matrix:
         include:
           - context: ./frontend
-          - image_name: ghcr.io/OumarDiagne/cicd-projet2/frontend
+          - image_name: ghcr.io/${{ github.repository }}/frontend
 
           - context: ./node-api
-          - image_name: ghcr.io/OumarDiagne/cicd-projet2/node-api
+          - image_name: ghcr.io/${{ github.repository }}/node-api
     steps:
       - name: checkout code
         uses: actions/checkout@v3
