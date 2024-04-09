@@ -10,14 +10,14 @@ jobs:
           - context: ./frontend
             image_name:
               [
-                ghcr.io/oumardiagne/cicd-projet2/node-api,
-                ghcr.io/oumardiagne/cicd-projet2/frontend,
+                ghcr.io/OumarDiagne/cicd-projet2/node-api,
+                ghcr.io/OumarDiagne/cicd-projet2/frontend,
               ]
           - context: ./node-api
             image_name:
               [
-                ghcr.io/oumardiagne/cicd-projet2/node-api,
-                ghcr.io/oumardiagne/cicd-projet2/node-api,
+                ghcr.io/OumarDiagne/cicd-projet2/node-api,
+                ghcr.io/OumarDiagne/cicd-projet2/node-api,
               ]
     permissions:
       packages: write
