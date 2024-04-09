@@ -2,13 +2,21 @@ name: Build et push images Docker
 on: push
 
 jobs:
-  # fix-repo-name:
-  #   runs-on: ubuntu-latest
+  fix-repo-name:
+     runs-on: ubuntu-latest
+     env:
+      OWNER: "${{ github.repository_owner }}"
+     steps:
+      - name: set lower case owner name
+      run: |
+        echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+        cat $GITHUB_ENV
+
+
 
   build-frontend-and-node-api:
-    env:
-      OWNER: "${{ github.repository_owner }}"
-    # needs: [fix-repo-name]
+   
+     needs: [fix-repo-name]
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -21,10 +29,6 @@ jobs:
           - context_name: "node-api"
             image_name: ghcr.io/${{ github.OWNER_LC }}/cicd-projet2/node-api
     steps:
-      - name: set lower case owner name
-        run: |
-          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
-
       - name: checkout code
         uses: actions/checkout@v3
       - name: Set up QEMU
