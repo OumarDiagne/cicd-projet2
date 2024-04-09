@@ -9,11 +9,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: "./frontend"
-          - image_name: ghcr.io/${{ github.repository }}/frontend
+          - context_name: "frontend"
+            image_name: ghcr.io/${{ github.repository }}/frontend
 
-          - context: "./node-api"
-          - image_name: ghcr.io/${{ github.repository }}/node-api
+          - context_name: "node-api"
+            image_name: ghcr.io/${{ github.repository }}/node-api
     steps:
       - name: checkout code
         uses: actions/checkout@v3
@@ -30,8 +30,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./${{ matrix.context }}
           push: true
           tags: ${{ matrix.image_name }}:latest
+          context: ./${{ matrix.context_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
