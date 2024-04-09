@@ -9,10 +9,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: ./frontend
+          - context: "./frontend"
           - image_name: ghcr.io/${{ github.repository }}/frontend
 
-          - context: ./node-api
+          - context: "./node-api"
           - image_name: ghcr.io/${{ github.repository }}/node-api
     steps:
       - name: checkout code
@@ -30,7 +30,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ${{ matrix.context }}
+          context: ./${{ matrix.context }}
           push: true
           tags: ${{ matrix.image_name }}:latest
           cache-from: type=gha
