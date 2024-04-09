@@ -37,9 +37,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: context
+          context: ${{ matrix.context }}
           push: true
-          tags: image_name
+          tags: ${{ matrix.image_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -63,8 +63,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: context
+          context: ${{ matrix.context }}
           push: true
-          tags: image_name
+          tags: ${{ matrix.image_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
