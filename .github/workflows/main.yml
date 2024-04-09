@@ -3,16 +3,14 @@ on: push
 
 jobs:
   fix-repo-name:
-   runs-on: ubuntu-latest
-   env:
-    OWNER: "${{ github.repository_owner }}"
+    runs-on: ubuntu-latest
+    env:
+      OWNER: "${{ github.repository_owner }}"
     steps:
-      - name: set lower case owner name
-        run: |
-         echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
-         cat $GITHUB_ENV
-
-
+        - name: set lower case owner name
+          run: |
+            echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+            cat $GITHUB_ENV
 
   build-frontend-and-node-api:
   needs: [fix-repo-name]
