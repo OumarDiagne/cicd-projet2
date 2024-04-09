@@ -10,7 +10,7 @@ jobs:
       - name: set lower case owner name
         run: |
           cat $GITHUB_ENV
-          cat $OWNER
+          echo $OWNER
           echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
           cat $GITHUB_ENV
 
