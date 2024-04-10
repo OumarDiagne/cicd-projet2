@@ -1,0 +1,28 @@
+name: "deployer sur le serveur cible"
+description: "Effectue un déploiement sur le serveur cible"
+inputs:
+  vps_key:
+    description: "clé ssh pour le vps"
+    required: true
+  server_ip:
+    description: "target server ip adress"
+    required: true
+  user_vps:
+    description: "user for ssh connexion on vps"
+    default: root
+  token_github:
+    description: "token github"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: déployer sur le serveur
+      shell: bash
+      run: |
+        eval $(ssh-agent -s)
+        ssh-add - <<< "${{ secrets.KEY_VPS }}"
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ inputs.server_ip }} >> ~/.ssh/known_hosts
+        scp docker-compose.production.yml ${{ inputs.user_vps }}@${{ inputs.server_ip }}:/root/docker-compose.production.yml
+        ssh ${{ inputs.user_vps }}@${{ inputs.server_ip }} "docker login ghcr.io -u ${{ github.actor }} -p ${{ inputs.token_github }} &&
+        docker compose -f /root/docker-compose.production.yml up -d --force-recreate"

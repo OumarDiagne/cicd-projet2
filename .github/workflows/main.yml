@@ -127,16 +127,13 @@ jobs:
     if: github.ref=='refs/heads/main'
     environment:
       name: production
-      url: http://$SERVER_PROD_IP
+      url: http://${{env.se}}
     steps:
       - name: checkout code
         uses: actions/checkout@v4
       - name: déployer sur le serveur
-        run: |
-          eval $(ssh-agent -s)
-          ssh-add - <<< "${{ secrets.KEY_VPS }}"
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ env.SERVER_PROD_IP }} >> ~/.ssh/known_hosts
-          scp docker-compose.production.yml ${{ env.SERVER_PROD_USER }}@${{ env.SERVER_PROD_IP }}:/root/docker-compose.production.yml
-          ssh ${{ env.SERVER_PROD_USER }}@${{ env.SERVER_PROD_IP }} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} &&
-            docker compose -f /root/docker-compose.production.yml up -d --force-recreate"
+        uses: ./.github/actions/deploy
+        with:
+          vps_key: ${{ secrets.KEY_VPS }}
+          server_ip: ${{ env.SERVER_PROD_IP }}
+          token_github: ${{ secrets.GITHUB_TOKEN }}
