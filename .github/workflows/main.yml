@@ -1,6 +1,8 @@
 name: Build et push images Docker
 on: push
-
+env:
+  SERVER_PROD_IP: "162.19.78.126"
+  SERVER_PROD_USER: root
 jobs:
   tests-frontend:
     runs-on: ubuntu-latest
@@ -118,3 +120,23 @@ jobs:
       - name: clean
         run: |
           docker compose down -v --remove-orphans
+
+  deploy-production:
+    needs: e2e
+    runs-on: ubuntu-latest
+    if: github.ref=='refs/heads/main'
+    environment:
+      name: production
+      url: http://$SERVER_PROD_IP
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+      - name: déployer sur le serveur
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add - <<< "${{ secrets.KEY_VPS }}"
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ env.SERVER_PROD_IP }} >> ~/.ssh/known_hosts
+          scp docker-compose.prod.yml ${{ env.SERVER_PROD_USER }}@${{ env.SERVER_PROD_IP }}:/var/www/docker-compose.prod.yml
+          ssh ${{ env.SERVER_PROD_USER }}@${{ env.SERVER_PROD_IP }} "docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} &&
+            docker compose -f /var/www/docker-compose.prod.yml up -d --force-recreate"
